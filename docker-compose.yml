@@ -1,0 +1,13 @@
+version: "3.3"
+services: 
+  http-callback:
+    network_mode: "host"
+    container_name: http-callback
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    image: http-callback:latest
+    env_file: 
+      .env
+    volumes:
+      - ./static/:/app/http-callback/static
