@@ -11,3 +11,17 @@ services:
       .env
     volumes:
       - ./static/:/app/http-callback/static
+    depends_on:
+      - redis-callback
+    networks:
+      - http-callback-network
+  redis-callback:
+    container_name: redis-callback
+    image: redis:6-alpine
+    restart: always
+    command: redis-server
+    hostname: redis-callback
+    ports:
+      - 6381:6379
+    networks:
+      - http-callback-network

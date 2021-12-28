@@ -25,7 +25,7 @@ func (rc *RouteConfig) RegisterRoutes() {
 		r.Route("/deploy", func(r chi.Router) {
 			r.Group(func(r chi.Router) {
 				cbhndlr := handler.CallbackHandler{Handler: hndlr}
-				r.Get("/", cbhndlr.Deploy)
+				r.Post("/", cbhndlr.Deploy)
 			})
 		})
 	})

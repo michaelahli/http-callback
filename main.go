@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/go-chi/chi"
+	"github.com/go-redis/redis"
 	"github.com/rs/cors"
 	"github.com/spf13/viper"
 )
@@ -49,9 +50,19 @@ func main() {
 		bash = cmd.NewTerminal("bash")
 	)
 
+	redisClient := redis.NewClient(&redis.Options{
+		Addr:     os.Getenv("REDIS_HOST"),
+		Password: os.Getenv("REDIS_PASSWORD"),
+		DB:       0,
+	})
+
+	pong, err := redisClient.Ping().Result()
+	fmt.Println("Redis ping status: "+pong, err)
+
 	usecase := usecase.UC{
 		Helper: config,
 		Bash:   bash,
+		Redis:  redisClient,
 	}
 
 	router := httpRouter.New(r, &usecase)
