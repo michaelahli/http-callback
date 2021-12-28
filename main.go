@@ -7,20 +7,42 @@ import (
 	httpRouter "http-callback/server/http/router"
 	"http-callback/server/usecase"
 	"http-callback/svcutil/cmd"
+	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
 	"github.com/go-chi/chi"
 	"github.com/rs/cors"
+	"github.com/spf13/viper"
 )
 
-func main() {
-	config := helper.New()
-	config.SetUp()
+var config helper.Helper
 
+func init() {
+	cfg := viper.NewWithOptions(
+		viper.EnvKeyReplacer(
+			strings.NewReplacer(".", "_"),
+		),
+	)
+
+	cfg.SetConfigFile("config")
+	cfg.SetConfigType("ini")
+
+	if err := cfg.ReadInConfig(); err != nil {
+		log.Fatalf("error loading configuration: %v", err)
+	}
+
+	envPath := cfg.GetString("environment.envPath")
+
+	config := helper.New()
+	config.SetUp(envPath)
+}
+
+func main() {
 	var (
 		r    = chi.NewRouter()
 		host = os.Getenv("APP_HOST")

@@ -3,7 +3,7 @@ package helper
 type helper struct{}
 
 type Helper interface {
-	SetUp()
+	SetUp(string)
 }
 
 func New() Helper {
