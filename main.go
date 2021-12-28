@@ -50,19 +50,20 @@ func main() {
 		bash = cmd.NewTerminal("bash")
 	)
 
-	redisClient := redis.NewClient(&redis.Options{
+	redisClient := &redis.Options{
 		Addr:     os.Getenv("REDIS_HOST"),
 		Password: os.Getenv("REDIS_PASSWORD"),
 		DB:       0,
-	})
+	}
+	redisPool := redis.NewClient(redisClient)
 
-	pong, err := redisClient.Ping().Result()
+	pong, err := redisPool.Ping().Result()
 	fmt.Println("Redis ping status: "+pong, err)
 
 	usecase := usecase.UC{
 		Helper: config,
 		Bash:   bash,
-		Redis:  redisClient,
+		Redis:  redisPool,
 	}
 
 	router := httpRouter.New(r, &usecase)
