@@ -1,0 +1,26 @@
+kind: pipeline
+name: deployapp
+
+trigger:
+  event:
+    include:
+    - push
+    - pull_request
+
+steps:
+  - name: env-setup
+    image: golang:1.17
+    environment:
+      GOPATH: /go-cache/gopath
+    commands:
+      - go version
+      - go mod tidy
+      - go mod verify
+  - name: go-test
+    image: golang:1.17
+    commands:
+      - go test -vet=off -race -timeout=5m ./...
+  - name: go-build
+    image: golang:1.17
+    commands:
+      - go build -ldflags="-w -s" -o main
