@@ -27,6 +27,7 @@ func (rc *RouteConfig) RegisterRoutes() {
 	rc.R.Route("/v1", func(r chi.Router) {
 		r.Route("/deploy", func(r chi.Router) {
 			r.Group(func(r chi.Router) {
+				rc.R.Use(middleware.VerifyBasicAuth)
 				cbhndlr := handler.CallbackHandler{Handler: hndlr}
 				r.Post("/", cbhndlr.CreateDeployment)
 			})
